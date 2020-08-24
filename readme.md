@@ -26,7 +26,7 @@ $options = [
 $builder = new Sentry\ClientBuilder(new Sentry\Options($options));
 $sentry = new Sentry\State\Hub($builder->getClient());
 
-$logger = new Logger('oub_api');
+$logger = new Logger('app');
 $logger->pushHandler(new Sentry\Monolog\Handler($sentry, Logger::NOTICE));
 
 $error = new Codin\Fault\ErrorHandler();
