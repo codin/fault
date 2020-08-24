@@ -1,0 +1,45 @@
+{
+    "name": "codin/fault",
+    "license": "Apache-2.0",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Kieron",
+            "email": "hello@madebykieron.co.uk",
+            "homepage": "http://madebykieron.co.uk",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.3"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "@stable",
+        "phpstan/phpstan": "@stable",
+        "friendsofphp/php-cs-fixer": "@stable"
+    },
+    "autoload": {
+        "psr-4": {
+            "Codin\\Fault\\": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "bin-dir": "bin"
+    },
+    "scripts": {
+        "psr": [
+            "./bin/php-cs-fixer fix . --allow-risky=yes --rules=@PSR2,no_unused_imports,ordered_imports,ordered_interfaces,single_quote,trailing_comma_in_multiline_array"
+        ],
+        "test": [
+            "phpstan analyse",
+            "phpspec run"
+        ],
+        "uninstall": [
+            "rm -rf ./bin",
+            "rm -rf ./vendor",
+            "rm ./composer.lock"
+        ]
+    }
+}
