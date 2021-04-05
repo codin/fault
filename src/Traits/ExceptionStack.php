@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Codin\Fault\Traits;
 
-use Codin\Fault\Stack;
+use Codin\Fault\Inspection\Stack;
 use Throwable;
 
 trait ExceptionStack

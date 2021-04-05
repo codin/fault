@@ -11,12 +11,13 @@
         }
     ],
     "require": {
-        "php": ">=7.3"
+        "php": ">=7.4"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "@stable",
+        "friends-of-phpspec/phpspec-code-coverage": "@stable",
         "phpspec/phpspec": "@stable",
-        "phpstan/phpstan": "@stable",
-        "friendsofphp/php-cs-fixer": "@stable"
+        "phpstan/phpstan": "@stable"
     },
     "autoload": {
         "psr-4": {
@@ -34,7 +35,7 @@
         ],
         "test": [
             "phpstan analyse",
-            "phpspec run"
+            "XDEBUG_MODE=coverage phpspec run"
         ],
         "uninstall": [
             "rm -rf ./bin",

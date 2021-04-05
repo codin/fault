@@ -9,10 +9,7 @@ use Throwable;
 
 trait ExceptionMessage
 {
-    /**
-     * @var array
-     */
-    private $levels = [
+    private array $levels = [
         1 => 'E_ERROR',
         2 => 'E_WARNING',
         4 => 'E_PARSE',
@@ -32,7 +29,7 @@ trait ExceptionMessage
 
     protected function getMessage(Throwable $e): string
     {
-        $type = $e instanceof ErrorException ? $this->levels[$e->getSeverity()] : \sprintf('Uncaught %s', \get_class($e));
+        $type = $e instanceof ErrorException ? $this->levels[$e->getSeverity()] : \get_class($e);
         return \sprintf('%s: %s', $type, $e->getMessage());
     }
 

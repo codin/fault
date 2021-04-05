@@ -12,10 +12,13 @@
     <div class="container">
         <?php foreach ($stack as $trace): ?>
         <div class="section">
-            <h2><?php echo get_class($trace->getException()); ?></h2>
+            <h2><?php echo e($trace->getExceptionClassName()); ?></h2>
             <p><?php echo e($trace->getException()->getMessage()); ?></p>
-            <p class="quiet"><code><?php echo $trace->getException()->getFile(); ?></code> on line <code><?php echo $trace->getException()->getLine(); ?></code></p>
-
+            <p class="quiet">
+                <code><?php echo $trace->getException()->getFile(); ?></code>
+                on line
+                <code><?php echo $trace->getException()->getLine(); ?></code>
+            </p>
             <div class="block">
             <?php
             $lines = $trace->getContext()->getPlaceInFile();
@@ -23,7 +26,7 @@
             foreach ($lines as $lineNumber => $code) {
                 $line = \str_pad((string) $lineNumber, $pad, ' ', STR_PAD_LEFT);
                 $class = ['line'];
-                if ($e->getLine() == $lineNumber) {
+                if ($trace->getException()->getLine() == $lineNumber) {
                     $class[] = 'highlight';
                 }
                 $className = \implode(' ', $class);
@@ -37,20 +40,20 @@
             ?>
             </div>
 
-            <p><b>Stacktrace</b></p>
+            <p><b>Frames</b></p>
             <?php foreach ($trace->getFrames() as $frame): ?>
             <div class="frame">
                 <div class="frame-header">
                     <span class="quiet">
                         <code><?php echo $frame->getCaller(); ?></code>
-                        <?php if ($frame->hasFile()): ?>
+                        <?php if ($frame->getFile()): ?>
                         in <code><?php echo $frame->getFile(); ?></code> on line <code><?php echo $frame->getLine(); ?></code>
                         <?php endif; ?>
                     </span>
                 </div>
-                <?php if ($frame->hasContext() || $frame->hasArgument()): ?>
+                <?php if ($frame->getFile()): ?>
                 <div class="frame-body">
-                    <?php if ($frame->hasContext()): ?>
+
                     <div class="block">
                     <?php
                     $lines = $frame->getContext()->getPlaceInFile();
@@ -71,9 +74,8 @@
                     }
                     ?>
                     </div>
-                    <?php endif; ?>
 
-                    <?php if ($frame->hasArgument()): ?>
+                    <?php if ($frame->getArguments()): ?>
                     <p><b>Arguments</b></p>
                     <table class="table">
                         <tbody>
