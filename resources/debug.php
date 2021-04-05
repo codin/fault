@@ -61,7 +61,7 @@
                     foreach ($lines as $lineNumber => $code) {
                         $line = \str_pad((string) $lineNumber, $pad, ' ', STR_PAD_LEFT);
                         $class = ['line'];
-                        if ($e->getLine() == $lineNumber) {
+                        if ($frame->getLine() == $lineNumber) {
                             $class[] = 'highlight';
                         }
                         $className = \implode(' ', $class);
