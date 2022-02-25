@@ -36,7 +36,7 @@
         ],
         "test": [
             "phpstan analyse",
-            "XDEBUG_MODE=coverage phpspec run"
+            "phpspec run"
         ],
         "uninstall": [
             "rm -rf ./bin",
