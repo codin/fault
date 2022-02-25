@@ -16,7 +16,16 @@ class Frame
 
     protected array $args;
 
-    public function __construct(?string $file, ?int $line, ?string $caller = null, array $args = [])
+    public static function create(array $frame): self
+    {
+        $caller = $frame['function'] ?? '(unknown)';
+        if (isset($frame['class'], $frame['type'])) {
+            $caller = $frame['class'].$frame['type'].$frame['function'];
+        }
+        return new self($frame['file'] ?? null, $frame['line'] ?? null, $caller, $frame['args'] ?? []);
+    }
+
+    final public function __construct(?string $file, ?int $line, ?string $caller = null, array $args = [])
     {
         $this->file = $file;
         $this->line = $line;
@@ -108,15 +117,17 @@ class Frame
             return $value.'.0';
         } elseif (\is_integer($value) || \is_float($value)) {
             return (string) $value;
-        } elseif (\is_object($value) || \gettype($value) == 'object') {
+        } elseif (\is_object($value)) {
             return 'Object '.\get_class($value);
         } elseif (\is_resource($value)) {
             return 'Resource '.\get_resource_type($value);
         } elseif (\is_array($value)) {
             return 'Array '.\count($value);
+        } elseif (\is_string($value)) {
+            return $this->truncate($value);
         }
 
-        return $this->truncate($value);
+        throw Exceptions\FrameError::normaliseUnknown($value);
     }
 
     protected function truncate(string $value, int $threshold = 1024): string

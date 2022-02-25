@@ -35,14 +35,7 @@ class Trace
         $frames = [];
 
         foreach ($this->exception->getTrace() as $params) {
-            $frames[] = new Frame(
-                isset($params['file']) ? (string) $params['file'] : null,
-                isset($params['line']) ? (int) $params['line'] : null,
-                isset($params['class'], $params['type'], $params['function']) ?
-                    sprintf('%s%s%s', $params['class'], $params['type'], $params['function']) :
-                    (isset($params['function']) ? $params['function'] : null),
-                $params['args']
-            );
+            $frames[] = Frame::create($params);
         }
 
         return $frames;
