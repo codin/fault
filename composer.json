@@ -1,5 +1,6 @@
 {
     "name": "codin/fault",
+    "description": "Extendable error handler",
     "license": "Apache-2.0",
     "type": "library",
     "authors": [
