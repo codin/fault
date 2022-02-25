@@ -21,12 +21,5 @@ jobs:
     - name: composer install
       run: composer install --no-progress
 
-    - name: phpspec
-      uses: php-actions/phpspec@master
-      with:
-        config: phpspec.yml
-
-    - name: phpstan
-      uses: php-actions/phpstan@v3
-      with:
-        configuration: phpstan.neon
+    - name: composer tests
+      run: composer test
