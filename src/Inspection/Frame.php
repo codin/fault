@@ -16,6 +16,8 @@ class Frame
 
     protected array $args;
 
+    protected Normaliser $normaliser;
+
     public static function create(array $frame): self
     {
         $caller = $frame['function'] ?? '(unknown)';
@@ -25,12 +27,18 @@ class Frame
         return new self($frame['file'] ?? null, $frame['line'] ?? null, $caller, $frame['args'] ?? []);
     }
 
-    final public function __construct(?string $file, ?int $line, ?string $caller = null, array $args = [])
-    {
+    final public function __construct(
+        ?string $file,
+        ?int $line,
+        ?string $caller = null,
+        array $args = [],
+        ?Normaliser $normaliser = null
+    ) {
         $this->file = $file;
         $this->line = $line;
         $this->caller = $caller;
         $this->args = $args;
+        $this->normaliser = $normaliser ?? new Normaliser();
     }
 
     public function getFile(): ?string
@@ -63,7 +71,7 @@ class Frame
 
         foreach (\array_values($this->args) as $index => $arg) {
             $name = \array_key_exists($index, $paramNames) ? $paramNames[$index]->getName() : 'param'.($index+1);
-            $args[$name] = $this->normalise($arg);
+            $args[$name] = $this->normaliser->normalise($arg);
         }
 
         return $args;
@@ -84,13 +92,13 @@ class Frame
             }
             try {
                 $func = (new \ReflectionClass($class))->getMethod($method);
-            } catch (\ReflectionException  $e) {
+            } catch (\ReflectionException $e) {
                 return $params;
             }
         } else {
             try {
                 $func = (new \ReflectionFunction($this->caller));
-            } catch (\ReflectionException  $e) {
+            } catch (\ReflectionException $e) {
                 return $params;
             }
         }
@@ -102,42 +110,14 @@ class Frame
         return $params;
     }
 
-    /**
-     * @param mixed $value
-     */
-    protected function normalise($value): string
+    public function __toString(): string
     {
-        if ($value === null) {
-            return 'null';
-        } elseif ($value === false) {
-            return 'false';
-        } elseif ($value === true) {
-            return 'true';
-        } elseif (\is_float($value) && (int) $value == $value) {
-            return $value.'.0';
-        } elseif (\is_integer($value) || \is_float($value)) {
-            return (string) $value;
-        } elseif (\is_object($value)) {
-            return 'Object '.\get_class($value);
-        } elseif (\is_resource($value)) {
-            return 'Resource '.\get_resource_type($value);
-        } elseif (\is_array($value)) {
-            return 'Array '.\count($value);
-        } elseif (\is_string($value)) {
-            return $this->truncate($value);
+        $location = '';
+
+        if ($this->getFile()) {
+            $location = sprintf('%s(%u): ', $this->getFile(), $this->getLine());
         }
 
-        throw Exceptions\FrameError::normaliseUnknown($value);
-    }
-
-    protected function truncate(string $value, int $threshold = 1024): string
-    {
-        $size = \mb_strlen($value);
-
-        if ($size > $threshold) {
-            return \mb_substr($value, 0, $threshold).' (truncated)';
-        }
-
-        return $value;
+        return $location . $this->getCaller();
     }
 }
