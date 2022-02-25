@@ -30,8 +30,12 @@ jobs:
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-dist --no-progress --no-suggest
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+    - name: phpspec
+      uses: php-actions/phpspec@master
+      with:
+        config: phpspec.yml
 
-    - name: Run test suite
-      run: composer run-script test
+    - name: phpstan
+      uses: php-actions/phpstan@v3
+      with:
+        configuration: phpstan.neon
