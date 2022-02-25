@@ -28,7 +28,7 @@ jobs:
 
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: composer install --prefer-dist --no-progress --no-suggest
+      run: composer install --no-progress --no-ansi --no-cache
 
     - name: phpspec
       uses: php-actions/phpspec@master
