@@ -112,7 +112,7 @@ class Frame
 
     public function __toString(): string
     {
-        $location = '';
+        $location = '[internal function]: ';
 
         if ($this->getFile()) {
             $location = sprintf('%s(%u): ', $this->getFile(), $this->getLine());
