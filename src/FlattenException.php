@@ -8,6 +8,8 @@ use Throwable;
 
 class FlattenException
 {
+    protected string $className;
+
     protected string $message;
 
     protected string $file;
@@ -24,6 +26,7 @@ class FlattenException
 
     public function __construct(Throwable $exception, ?Inspection\Normaliser $normaliser = null)
     {
+        $this->setClassName(get_class($exception));
         $this->setMessage($exception->getMessage());
         $this->setFile($exception->getFile());
         $this->setLine($exception->getLine());
@@ -33,6 +36,16 @@ class FlattenException
             $this->setPrevious($previousException);
         }
         $this->normaliser = $normaliser ?? new Inspection\Normaliser();
+    }
+
+    public function getClassName(): string
+    {
+        return $this->className;
+    }
+
+    public function setClassName(string $className): void
+    {
+        $this->className = $className;
     }
 
     public function getMessage(): string
@@ -83,7 +96,7 @@ class FlattenException
     public function setTrace(array $trace): void
     {
         $flatten = function (array $frame): array {
-            $frame['args'] = $this->flattenArgs($frame['args']);
+            $frame['args'] = $this->flattenArgs($frame['args'] ?? []);
             return $frame;
         };
 
