@@ -6,6 +6,7 @@ namespace Codin\Fault\Handlers;
 
 use Codin\Fault\Contracts\ExceptionHandler;
 use Codin\Fault\Exceptions;
+use Codin\Fault\Inspection\Trace;
 use Codin\Fault\Traits;
 use Throwable;
 
@@ -47,34 +48,43 @@ class Console implements ExceptionHandler
 
     public function handle(Throwable $e): void
     {
+        foreach ($this->getStack($e) as $trace) {
+            if (!$trace instanceof Trace) {
+                continue;
+            }
+            $this->handleStack($trace);
+        }
+    }
+
+    protected function handleStack(Trace $trace): void
+    {
         $indent = '    ';
         $doubleIndent = $indent.$indent;
+        $exception = $trace->getException();
 
-        foreach ($this->getStack($e) as $trace) {
-            $text = $this->getMessage($trace->getException());
-            $this->writeln($text."\n");
-            $this->writeln($indent.$trace->getException()->getFile().':'.$trace->getException()->getLine());
-            $this->writeln('');
+        $text = $this->getMessage($exception);
+        $this->writeln($text."\n");
+        $this->writeln($indent.$exception->getFile().':'.$exception->getLine());
+        $this->writeln('');
 
-            foreach ($trace->getContext()->getPlaceInFile() as $num => $line) {
-                $lineIndent = $doubleIndent;
+        foreach ($trace->getContext()->getPlaceInFile() as $num => $line) {
+            $lineIndent = $doubleIndent;
 
-                if ($num === $trace->getException()->getLine()) {
-                    $lineIndent = $indent.'--> ';
-                }
-
-                $text = $lineIndent.$num.' '.\rtrim($line);
-                $this->writeln($text);
+            if ($num === $trace->getException()->getLine()) {
+                $lineIndent = $indent.'--> ';
             }
 
-            $this->writeln('');
-
-            foreach ($trace->getFrames() as $index => $frame) {
-                $context = $frame->getFile() ? $frame->getFile().':'.$frame->getLine() : $frame->getCaller();
-                $this->writeln($indent.$context);
-            }
-
-            $this->writeln('');
+            $text = $lineIndent.$num.' '.\rtrim($line);
+            $this->writeln($text);
         }
+
+        $this->writeln('');
+
+        foreach ($trace->getFrames() as $index => $frame) {
+            $context = $frame->getFile() ? $frame->getFile().':'.$frame->getLine() : $frame->getCaller();
+            $this->writeln($indent.$context);
+        }
+
+        $this->writeln('');
     }
 }
