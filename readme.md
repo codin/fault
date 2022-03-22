@@ -1,7 +1,8 @@
 # Fault
 
-![version](https://img.shields.io/github/v/tag/codin/fault?color=light-green&label=version&style=flat-square)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/codin/fault/Composer?label=build&logo=github&style=flat-square)](https://github.com/codin/fault/actions)
+![version](https://img.shields.io/github/v/tag/codin/fault)
+![workflow](https://img.shields.io/github/workflow/status/codin/fault/Composer)
+![license](https://img.shields.io/github/license/codin/fault)
 
 Simple error exception handler
 
