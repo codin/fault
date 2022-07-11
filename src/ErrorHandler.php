@@ -18,15 +18,23 @@ class ErrorHandler
 
     protected ?string $reservedMemory;
 
+    protected bool $throwErrorsAsExceptions = false;
+
     /**
      * Register callback for handling errors
      */
     public function register(int $reservedMemorySize = 10): void
     {
+        if (empty($this->listeners)) {
+            throw Exceptions\NoListenersRegistered::noneRegistered();
+        }
+
         if ($reservedMemorySize < 0) {
             $reservedMemorySize = 0;
         }
+
         $this->reservedMemory = \str_repeat(' ', 1024 * $reservedMemorySize);
+
         \set_error_handler([$this, 'onError']);
         \set_exception_handler([$this, 'onException']);
         \register_shutdown_function([$this, 'onShutdown']);
@@ -49,18 +57,32 @@ class ErrorHandler
         $this->listeners[] = $listener;
     }
 
+    public function treatErrorsAsExceptions(bool $bool): void
+    {
+        $this->throwErrorsAsExceptions = $bool;
+    }
+
     /**
      * Handle error
      */
-    public function onError(int $level, string $message, string $file, int $line): bool
+    public function onError(int $severity, string $message, string $file, int $line): bool
     {
-        if ($level & \error_reporting()) {
-            $this->onException(new ErrorException($message, 0, $level, $file, $line));
-            if ($level & $this->fatalErrors) {
+        if ($severity & \error_reporting()) {
+            $e = new ErrorException($message, 0, $severity, $file, $line);
+
+            if ($this->throwErrorsAsExceptions) {
+                throw $e;
+            } else {
+                $this->onException($e);
+            }
+
+            if ($severity & $this->fatalErrors) {
                 $this->terminate();
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -90,8 +112,13 @@ class ErrorHandler
      */
     public function onShutdown(): void
     {
+        // We can't throw exceptions in the shutdown handler.
+        $this->treatErrorsAsExceptions(false);
+
         $this->reservedMemory = null;
+
         $error = \error_get_last();
+
         if ($error && ($error['type'] & $this->fatalErrors)) {
             $this->onError($error['type'], $error['message'], $error['file'], $error['line']);
         }
