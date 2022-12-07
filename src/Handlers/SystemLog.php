@@ -21,8 +21,8 @@ class SystemLog implements ExceptionHandler
 
     public function handle(Throwable $e): void
     {
-        \openlog($this->ident, LOG_PID | LOG_PERROR, LOG_USER);
-        \syslog(LOG_ERR, $this->getMessageWithSource($e));
-        \closelog();
+        openlog($this->ident, LOG_PID | LOG_PERROR, LOG_USER);
+        syslog(LOG_ERR, $this->getMessageWithSource($e));
+        closelog();
     }
 }

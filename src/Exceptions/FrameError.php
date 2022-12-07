@@ -13,6 +13,6 @@ class FrameError extends Exception
      */
     public static function normaliseUnknown($value): self
     {
-        return new self('failed to normalise value of type: '.gettype($value));
+        return new self('failed to normalise value of type: '.\gettype($value));
     }
 }

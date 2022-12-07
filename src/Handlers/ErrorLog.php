@@ -14,6 +14,6 @@ class ErrorLog implements ExceptionHandler
 
     public function handle(Throwable $e): void
     {
-        \error_log($this->getMessageWithSource($e));
+        error_log($this->getMessageWithSource($e));
     }
 }

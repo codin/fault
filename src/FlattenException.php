@@ -26,7 +26,7 @@ class FlattenException
 
     public function __construct(Throwable $exception, ?Inspection\Normaliser $normaliser = null)
     {
-        $this->setClassName(get_class($exception));
+        $this->setClassName(\get_class($exception));
         $this->setMessage($exception->getMessage());
         $this->setFile($exception->getFile());
         $this->setLine($exception->getLine());

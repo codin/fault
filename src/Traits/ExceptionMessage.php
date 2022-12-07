@@ -30,12 +30,12 @@ trait ExceptionMessage
     protected function getMessage(Throwable $e): string
     {
         $type = $e instanceof ErrorException ? $this->levels[$e->getSeverity()] : \get_class($e);
-        return \sprintf('%s: %s', $type, $e->getMessage());
+        return sprintf('%s: %s', $type, $e->getMessage());
     }
 
     protected function getMessageWithSource(Throwable $e): string
     {
-        return \sprintf(
+        return sprintf(
             '%s in %s on %s',
             $this->getMessage($e),
             $e->getFile(),

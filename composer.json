@@ -32,7 +32,7 @@
     },
     "scripts": {
         "psr": [
-            "./bin/php-cs-fixer fix . --allow-risky=yes --rules=@PSR2,no_unused_imports,ordered_imports,ordered_interfaces,single_quote,trailing_comma_in_multiline"
+            "./bin/php-cs-fixer fix . --allow-risky=yes --rules=@PSR12,no_unused_imports,ordered_imports,ordered_interfaces,single_quote,trailing_comma_in_multiline,strict_comparison,global_namespace_import,fully_qualified_strict_types,native_function_invocation"
         ],
         "test": [
             "phpstan analyse --no-progress --no-ansi --configuration=phpstan.neon",

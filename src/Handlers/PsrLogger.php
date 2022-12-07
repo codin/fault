@@ -6,6 +6,7 @@ namespace Codin\Fault\Handlers;
 
 use Codin\Fault\Contracts\ExceptionHandler;
 use Codin\Fault\Traits;
+use ErrorException;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -24,7 +25,7 @@ class PsrLogger implements ExceptionHandler
     {
         $severity = E_USER_ERROR;
 
-        if ($e instanceof \ErrorException) {
+        if ($e instanceof ErrorException) {
             $severity = $e->getSeverity();
         }
 

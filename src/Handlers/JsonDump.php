@@ -19,10 +19,10 @@ class JsonDump implements ExceptionHandler
             $stack[] = $this->export($e);
         }
 
-        if (!\headers_sent()) {
-            \header('Content-Type: application/json', true, 500);
+        if (!headers_sent()) {
+            header('Content-Type: application/json', true, 500);
         }
-        echo \json_encode($stack, JSON_PRETTY_PRINT);
+        echo json_encode($stack, JSON_PRETTY_PRINT);
     }
 
     protected function export(Throwable $e): array

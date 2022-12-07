@@ -29,6 +29,6 @@ class Stack implements Countable, IteratorAggregate
 
     public function count(): int
     {
-        return count($this->exceptions);
+        return \count($this->exceptions);
     }
 }

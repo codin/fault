@@ -12,7 +12,8 @@ use Throwable;
 
 class Console implements ExceptionHandler
 {
-    use Traits\ExceptionMessage, Traits\ExceptionStack;
+    use Traits\ExceptionMessage;
+    use Traits\ExceptionStack;
 
     /**
      * @var resource
@@ -24,7 +25,7 @@ class Console implements ExceptionHandler
         if (null === $io) {
             $io = 'php://stderr';
         }
-        $stream = \fopen($io, 'w');
+        $stream = @fopen($io, 'w');
         if (false === $stream) {
             throw Exceptions\StreamError::failedOpening($io);
         }
@@ -33,12 +34,12 @@ class Console implements ExceptionHandler
 
     public function __destruct()
     {
-        \fclose($this->stream);
+        @fclose($this->stream);
     }
 
     protected function write(string $msg): void
     {
-        \fwrite($this->stream, $msg);
+        @fwrite($this->stream, $msg);
     }
 
     protected function writeln(string $msg): void
@@ -74,13 +75,13 @@ class Console implements ExceptionHandler
                 $lineIndent = $indent.'--> ';
             }
 
-            $text = $lineIndent.$num.' '.\rtrim($line);
+            $text = $lineIndent.$num.' '.rtrim($line);
             $this->writeln($text);
         }
 
         $this->writeln('');
 
-        foreach ($trace->getFrames() as $index => $frame) {
+        foreach ($trace->getFrames() as $frame) {
             $context = $frame->getFile() ? $frame->getFile().':'.$frame->getLine() : $frame->getCaller();
             $this->writeln($indent.$context);
         }

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Codin\Fault\Inspection;
 
 use Codin\Fault\Exceptions;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionFunction;
 
 class Frame
 {
@@ -69,7 +72,7 @@ class Frame
         $paramNames = $this->getCallerParams();
         $args = [];
 
-        foreach (\array_values($this->args) as $index => $arg) {
+        foreach (array_values($this->args) as $index => $arg) {
             $name = \array_key_exists($index, $paramNames) ? $paramNames[$index]->getName() : 'param'.($index+1);
             $args[$name] = $this->normaliser->normalise($arg);
         }
@@ -85,20 +88,20 @@ class Frame
             return $params;
         }
 
-        if (\strpos($this->caller, '->') || \strpos($this->caller, '::')) {
-            [$class, $method] = \explode(' ', \str_replace(['->', '::'], ' ', $this->caller));
+        if (strpos($this->caller, '->') || strpos($this->caller, '::')) {
+            [$class, $method] = explode(' ', str_replace(['->', '::'], ' ', $this->caller));
             if (!class_exists($class)) {
                 return $params;
             }
             try {
-                $func = (new \ReflectionClass($class))->getMethod($method);
-            } catch (\ReflectionException $e) {
+                $func = (new ReflectionClass($class))->getMethod($method);
+            } catch (ReflectionException $e) {
                 return $params;
             }
         } else {
             try {
-                $func = (new \ReflectionFunction($this->caller));
-            } catch (\ReflectionException $e) {
+                $func = (new ReflectionFunction($this->caller));
+            } catch (ReflectionException $e) {
                 return $params;
             }
         }

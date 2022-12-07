@@ -33,11 +33,11 @@ class ErrorHandler
             $reservedMemorySize = 0;
         }
 
-        $this->reservedMemory = \str_repeat(' ', 1024 * $reservedMemorySize);
+        $this->reservedMemory = str_repeat(' ', 1024 * $reservedMemorySize);
 
-        \set_error_handler([$this, 'onError']);
-        \set_exception_handler([$this, 'onException']);
-        \register_shutdown_function([$this, 'onShutdown']);
+        set_error_handler([$this, 'onError']);
+        set_exception_handler([$this, 'onException']);
+        register_shutdown_function([$this, 'onShutdown']);
     }
 
     /**
@@ -45,8 +45,8 @@ class ErrorHandler
      */
     public function deregister(): void
     {
-        \restore_error_handler();
-        \restore_exception_handler();
+        restore_error_handler();
+        restore_exception_handler();
     }
 
     /**
@@ -67,7 +67,7 @@ class ErrorHandler
      */
     public function onError(int $severity, string $message, string $file, int $line): bool
     {
-        if ($severity & \error_reporting()) {
+        if ($severity & error_reporting()) {
             $e = new ErrorException($message, 0, $severity, $file, $line);
 
             if ($this->throwErrorsAsExceptions) {
@@ -91,7 +91,7 @@ class ErrorHandler
      */
     public function onException(Throwable $exception): void
     {
-        if (!count($this->listeners)) {
+        if (!\count($this->listeners)) {
             $this->attach(new Handlers\PrintDump());
         }
 
@@ -100,7 +100,7 @@ class ErrorHandler
                 $listener->handle($exception);
             }
         } catch (Throwable $exceptionalException) {
-            \restore_exception_handler();
+            restore_exception_handler();
             throw $exceptionalException;
         }
     }
@@ -117,7 +117,7 @@ class ErrorHandler
 
         $this->reservedMemory = null;
 
-        $error = \error_get_last();
+        $error = error_get_last();
 
         if ($error && ($error['type'] & $this->fatalErrors)) {
             $this->onError($error['type'], $error['message'], $error['file'], $error['line']);

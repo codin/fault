@@ -24,7 +24,7 @@ class Normaliser
         } elseif (\is_object($value)) {
             return 'Object '.\get_class($value);
         } elseif (\is_resource($value)) {
-            return 'Resource '.\get_resource_type($value);
+            return 'Resource '.get_resource_type($value);
         } elseif (\is_array($value)) {
             return 'Array '.\count($value);
         } elseif (\is_string($value)) {
@@ -36,8 +36,8 @@ class Normaliser
 
     public function truncate(string $value, int $threshold): string
     {
-        if (\mb_strlen($value) > $threshold) {
-            return \mb_substr($value, 0, $threshold).' (truncated)';
+        if (mb_strlen($value) > $threshold) {
+            return mb_substr($value, 0, $threshold).' (truncated)';
         }
 
         return $value;
