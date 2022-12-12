@@ -61,27 +61,39 @@ class Console implements ExceptionHandler
     {
         $indent = '    ';
         $doubleIndent = $indent.$indent;
+
         $exception = $trace->getException();
 
         $text = $this->getMessage($exception);
         $this->writeln($text."\n");
         $this->writeln($indent.$exception->getFile().':'.$exception->getLine());
+
         $this->writeln('');
 
-        foreach ($trace->getFrames()[0]->getPlaceInFile() as $num => $line) {
-            $lineIndent = $doubleIndent;
+        $frames = $trace->getFrames();
 
-            if ($num === $trace->getException()->getLine()) {
-                $lineIndent = $indent.'--> ';
-            }
-
-            $text = $lineIndent.$num.' '.rtrim($line);
-            $this->writeln($text);
+        if (!\count($frames)) {
+            return;
         }
 
-        $this->writeln('');
+        if ($frames[0]->hasContext()) {
+            $frame = array_shift($frames);
 
-        foreach ($trace->getFrames() as $frame) {
+            foreach ($frame->getContext()->getPlaceInFile() as $num => $line) {
+                $lineIndent = $doubleIndent;
+
+                if ($num === $frame->getLine()) {
+                    $lineIndent = $indent.'--> ';
+                }
+
+                $text = $lineIndent.$num.' '.rtrim($line);
+                $this->writeln($text);
+            }
+
+            $this->writeln('');
+        }
+
+        foreach ($frames as $frame) {
             $context = $frame->getFile() ? $frame->getFile().':'.$frame->getLine() : $frame->getCaller();
             $this->writeln($indent.$context);
         }

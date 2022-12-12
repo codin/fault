@@ -27,6 +27,19 @@ class Trace
 
     public function getFrames(): array
     {
-        return array_map(fn (array $params): Frame => Frame::create($params), $this->exception->getTrace());
+        $frames = $this->exception->getTrace();
+
+        $containsException = array_reduce($frames, function (bool $carry, array $frame): bool {
+            return isset($frame['file'], $frame['line']) && $this->exception->getFile() === $frame['file'] && $this->exception->getLine() === $frame['line'] ? true : $carry;
+        }, false);
+
+        if (!$containsException) {
+            array_unshift($frames, [
+                'file' => $this->exception->getFile(),
+                'line' => $this->exception->getLine(),
+            ]);
+        }
+
+        return array_map(fn (array $params): Frame => Frame::create($params), $frames);
     }
 }

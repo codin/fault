@@ -24,7 +24,7 @@ class Frame
     public static function create(array $frame): self
     {
         // @link https://github.com/symfony/var-dumper/commit/7670e4790f447b3380993b8109ae2ed3d2366480
-        if (preg_match('/\((\d+)\)(?:\([\da-f]{32}\))? : (?:eval\(\)\'d code|runtime-created function)$/', $frame['file'] ??  '', $match) !== false) {
+        if (preg_match('/\((\d+)\)(?:\([\da-f]{32}\))? : (?:eval\(\)\'d code|runtime-created function)$/', $frame['file'] ??  '', $match)) {
             $frame['file'] = substr($frame['file'], 0, -\strlen($match[0]));
             $frame['line'] = (int) $match[1];
         }
@@ -68,6 +68,11 @@ class Frame
             throw Exceptions\ContextError::notAvailable();
         }
         return new Context($this->getFile(), $this->getLine());
+    }
+
+    public function hasContext(): bool
+    {
+        return null !== $this->getFile() && null !== $this->getLine() && is_file($this->getFile());
     }
 
     public function getCaller(): ?string
