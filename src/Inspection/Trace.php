@@ -25,19 +25,8 @@ class Trace
         return \get_class($this->exception);
     }
 
-    public function getContext(): Context
-    {
-        return new Context($this->exception->getFile(), $this->exception->getLine());
-    }
-
     public function getFrames(): array
     {
-        $frames = [];
-
-        foreach ($this->exception->getTrace() as $params) {
-            $frames[] = Frame::create($params);
-        }
-
-        return $frames;
+        return array_map(fn (array $params): Frame => Frame::create($params), $this->exception->getTrace());
     }
 }

@@ -68,7 +68,7 @@ class Console implements ExceptionHandler
         $this->writeln($indent.$exception->getFile().':'.$exception->getLine());
         $this->writeln('');
 
-        foreach ($trace->getContext()->getPlaceInFile() as $num => $line) {
+        foreach ($trace->getFrames()[0]->getPlaceInFile() as $num => $line) {
             $lineIndent = $doubleIndent;
 
             if ($num === $trace->getException()->getLine()) {

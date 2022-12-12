@@ -23,10 +23,18 @@ class Frame
 
     public static function create(array $frame): self
     {
+        // @link https://github.com/symfony/var-dumper/commit/7670e4790f447b3380993b8109ae2ed3d2366480
+        if (preg_match('/\((\d+)\)(?:\([\da-f]{32}\))? : (?:eval\(\)\'d code|runtime-created function)$/', $frame['file'] ??  '', $match) !== false) {
+            $frame['file'] = substr($frame['file'], 0, -\strlen($match[0]));
+            $frame['line'] = (int) $match[1];
+        }
+
         $caller = $frame['function'] ?? '(unknown)';
+
         if (isset($frame['class'], $frame['type'])) {
             $caller = $frame['class'].$frame['type'].$frame['function'];
         }
+
         return new self($frame['file'] ?? null, $frame['line'] ?? null, $caller, $frame['args'] ?? []);
     }
 
