@@ -23,11 +23,4 @@ class TraceSpec extends ObjectBehavior
         $this->beConstructedWith($a);
         $this->getException()->shouldEqual($a);
     }
-
-    public function it_should_return_context()
-    {
-        $a = new Exception('test 3');
-        $this->beConstructedWith($a);
-        $this->getContext()->shouldBeAnInstanceOf(Context::class);
-    }
 }
