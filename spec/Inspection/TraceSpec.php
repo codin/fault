@@ -2,7 +2,6 @@
 
 namespace spec\Codin\Fault\Inspection;
 
-use Codin\Fault\Inspection\Context;
 use Codin\Fault\Inspection\Frame;
 use Exception;
 use PhpSpec\ObjectBehavior;
